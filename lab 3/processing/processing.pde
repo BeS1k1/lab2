@@ -2,7 +2,6 @@ import processing.serial.*;
 
 Serial myPortServo;
 Serial myPortDist;
-PFont myFont;
 float dist;
 int pos;
 
@@ -11,16 +10,18 @@ void setup () {
   println(Serial.list());
   myPortDist = new Serial(this, "COM12", 115200);
   myPortDist.bufferUntil('\n');
-  myPortServo = new Serial(this, "COM19", 115200);
+  myPortServo = new Serial(this, "COM11", 115200);
   myPortServo.bufferUntil('\n');
   background(255);
-  ellipse(200, 199, 200, 200);
+  ellipse(200, 0, 400, 400);
 }
 
 void draw () {
-  float x = dist * cos(pos);
-  float y = dist * sin(pos);
-  point(x, y);
+  
+  float x = dist * cos(pos*PI/180);
+  float y = dist * sin(pos*PI/180);
+  println("x= "+x+" y= "+ y+" dist "+dist+" pos "+ pos);
+  point(x+200, y);
 
  /* stroke(0);
    line(xPos, 200, xPos, 199-inByte);
@@ -30,13 +31,11 @@ void draw () {
    text("Pos: " + pos, 10 , 50);
    
    */
-   if (pos >= 180) {
-    background(255);
-    ellipse(200, 199, 200, 200);
-   }
+   
 }
 
-void serialEvent(Serial myPortDist) {
+void serialEvent(Serial thisPort) {
+  if (thisPort == myPortDist){
   String inString = myPortDist.readStringUntil('\n');
   
  if (inString != null) {
@@ -46,9 +45,21 @@ void serialEvent(Serial myPortDist) {
    dist = float(inString);
    println(dist);
  }
+  }
+  else{
+ String inString = myPortServo.readStringUntil('\n');
+  
+ if (inString != null) {
+   // убираем любые пробелы:
+   inString = trim(inString);
+   // конвертируем данные в int
+   pos = int(inString);
+   println(pos);
+ }
+  }
 }
 
-void serialEvent1(Serial myPortServo) {
+/*void serialEvent1(Serial myPortServo) {
   String inString = myPortServo.readStringUntil('\n');
   
  if (inString != null) {
@@ -58,4 +69,4 @@ void serialEvent1(Serial myPortServo) {
    pos = int(inString);
    println(pos);
  }
-}
+}*/

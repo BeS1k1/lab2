@@ -11,7 +11,7 @@ void setup() {
 void loop() {
   float result = readDist();
   Serial.println(result);
-  delay(150);
+  delay(500);
 }
 
 float readDist()
